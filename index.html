@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+
+  /* Hero */
+  .hero{background:#1a1a1a;color:#fff;padding:4rem 2rem 3.5rem;text-align:center}
+  .hero-eyebrow{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:1.25rem}
+  .hero h1{font-size:42px;font-weight:700;line-height:1.15;margin-bottom:1rem;max-width:700px;margin-left:auto;margin-right:auto}
+  .hero h1 span{color:#d4d4d4;font-weight:400}
+  .hero .tagline{font-size:16px;color:#999;max-width:540px;margin:0 auto 2rem;line-height:1.6}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:2.5rem}
+  .hero-badge{background:#2a2a2a;border:1px solid #3a3a3a;color:#ccc;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500}
+  .hero-badge.highlight{background:#fff;color:#1a1a1a;border-color:#fff}
+  .hero-stats{display:flex;gap:3rem;justify-content:center;flex-wrap:wrap}
+  .hero-stat .num{font-size:28px;font-weight:700;color:#fff}
+  .hero-stat .lbl{font-size:11px;color:#666;margin-top:2px}
+
+  /* Tools grid */
+  .section{max-width:1050px;margin:0 auto;padding:3rem 2rem}
+  .section-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1.5rem}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem}
+  .tool-card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:1.5rem;text-decoration:none;color:inherit;display:block;transition:box-shadow 0.18s,border-color 0.18s;position:relative;overflow:hidden}
+  .tool-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.10);border-color:#ccc}
+  .tool-card.featured{border:2px solid #1a1a1a}
+  .featured-badge{position:absolute;top:14px;right:14px;background:#1a1a1a;color:#fff;font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;letter-spacing:0.04em;text-transform:uppercase}
+  .tool-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:1rem;background:#f0f0ec}
+  .tool-card h2{font-size:16px;font-weight:600;margin-bottom:6px}
+  .tool-card .desc{font-size:13px;color:#666;line-height:1.55;margin-bottom:1rem}
+  .tool-tags{display:flex;flex-wrap:wrap;gap:5px}
+  .tool-tag{background:#f0f0ec;color:#555;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:500}
+  .tool-arrow{position:absolute;bottom:1.25rem;right:1.25rem;color:#ccc;font-size:18px;transition:color 0.15s,transform 0.15s}
+  .tool-card:hover .tool-arrow{color:#1a1a1a;transform:translate(2px,-2px)}
+
+  /* About strip */
+  .about-strip{background:#fff;border-top:1px solid #e8e8e4;border-bottom:1px solid #e8e8e4;padding:2.5rem 2rem}
+  .about-inner{max-width:1050px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+  .about-inner h2{font-size:22px;font-weight:600;margin-bottom:0.75rem}
+  .about-inner p{font-size:14px;color:#666;line-height:1.7;margin-bottom:1rem}
+  .about-inner a{color:#1a1a1a;font-weight:500}
+  .proof-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .proof-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#444;line-height:1.5}
+  .proof-list li::before{content:'✓';font-weight:700;color:#16a34a;flex-shrink:0;margin-top:1px}
+
+  /* Footer */
+  footer{text-align:center;padding:2rem;font-size:12px;color:#aaa}
+  footer a{color:#888;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Bharani PM Intelligence Suite</div>
+  <h1>7 AI-powered tools for <span>enterprise program delivery</span></h1>
+  <p class="tagline">Built by a Senior Salesforce Delivery Manager who has used every one of these in real client engagements. Not demos — actual delivery tools.</p>
+  <div class="hero-badges">
+    <span class="hero-badge highlight">★ Agentforce Specialist</span>
+    <span class="hero-badge">7× Salesforce Certified</span>
+    <span class="hero-badge">$6M delivered · CSAT 5/5</span>
+    <span class="hero-badge">PMP · Six Sigma Green Belt</span>
+    <span class="hero-badge">VW Global Best Productivity Initiative</span>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">18</div><div class="lbl">Years in CRM delivery</div></div>
+    <div class="hero-stat"><div class="num">$6M</div><div class="lbl">Revenue managed (Katzion)</div></div>
+    <div class="hero-stat"><div class="num">5/5</div><div class="lbl">Client CSAT — all engagements</div></div>
+    <div class="hero-stat"><div class="num">7</div><div class="lbl">Salesforce certifications</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">The toolkit — 7 tools</div>
+  <div class="tools-grid">
+
+    <a href="project-health.html" class="tool-card">
+      <div class="tool-icon">📊</div>
+      <h2>Project Health Dashboard</h2>
+      <p class="desc">RAG status tracking across 9 delivery dimensions with one-click steering committee highlight report generation. Used on VGA, Audi, and Skoda programs.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Steering committee</span>
+        <span class="tool-tag">RAG status</span>
+        <span class="tool-tag">Highlight reports</span>
+      </div>
+      <span class="tool-arrow">↗</span>
+    </a>
+
+    <a href="risk-radar.html" class="tool-card">
+      <div class="tool-icon">🎯</div>
+      <h2>Risk Radar</h2>
+      <p class="desc">Dynamic risk register with live heat map scoring. Log risks by likelihood × impact, assign owners, track mitigations, and export to CSV for governance reporting.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">RAID log</span>
+        <span class="tool-tag">Heat map</span>
+        <span class="tool-tag">CSV export</span>
+      </div>
+      <span class="tool-arrow">↗</span>
+    </a>
+
+    <a href="stakeholder-mapper.html" class="tool-card">
+      <div class="tool-icon">🗺️</div>
+      <h2>Stakeholder Influence Mapper</h2>
+      <p class="desc">Power / interest grid with sentiment tracking and engagement strategy per stakeholder. Hover dots to see details. Built for multi-brand, multi-org programs like VGA.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Power/interest grid</span>
+        <span class="tool-tag">Sentiment</span>
+        <span class="tool-tag">Engagement strategy</span>
+      </div>
+      <span class="tool-arrow">↗</span>
+    </a>
+
+    <a href="agentforce-roi.html" class="tool-card featured">
+      <div class="featured-badge">Agentforce</div>
+      <div class="tool-icon">🤖</div>
+      <h2>Agentforce ROI Calculator</h2>
+      <p class="desc">Build the business case for AI agent automation. Based on real VGA POC results — dealer test-drive booking and warranty claims. 3-year ROI projection with payback period.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">AI business case</span>
+        <span class="tool-tag">ROI projection</span>
+        <span class="tool-tag">Agentforce</span>
+      </div>
+      <span class="tool-arrow">↗</span>
+    </a>
+
+    <a href="sow-estimator.html" class="tool-card">
+      <div class="tool-icon">📋</div>
+      <h2>SOW Scope Estimator</h2>
+      <p class="desc">Pre-sales effort and cost estimation for Salesforce engagements. Add workstreams, apply complexity multipliers, set margin targets, and generate a SOW summary for export.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Pre-sales</span>
+        <span class="tool-tag">SOW</span>
+        <span class="tool-tag">Effort estimation</span>
+      </div>
+      <span class="tool-arrow">↗</span>
+    </a>
+
+    <a href="sprint-tracker.html" class="tool-card">
+      <div class="tool-icon">🏃</div>
+      <h2>Sprint Velocity Tracker</h2>
+      <p class="desc">Log sprints, track committed vs completed story points, and visualise velocity trends and burn-down curves. Spots delivery risk before it becomes a steering committee issue.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Agile</span>
+        <span class="tool-tag">Velocity</span>
+        <span class="tool-tag">Burn-down</span>
+      </div>
+      <span class="tool-arrow">↗</span>
+    </a>
+
+    <a href="change-impact.html" class="tool-card">
+      <div class="tool-icon">🔄</div>
+      <h2>Change Impact Assessor</h2>
+      <p class="desc">Score change events across disruption, readiness, resistance, and training dimensions. Auto-generates recommended OCM actions. Seeded with real Audi/Skoda migration data.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">OCM</span>
+        <span class="tool-tag">Impact scoring</span>
+        <span class="tool-tag">Action planning</span>
+      </div>
+      <span class="tool-arrow">↗</span>
+    </a>
+
+  </div>
+</div>
+
+<div class="about-strip">
+  <div class="about-inner">
+    <div>
+      <h2>Built by someone who's actually used this stuff</h2>
+      <p>These aren't templates downloaded from a PM blog. Every tool in this suite was built from real delivery experience — the same frameworks I used managing Volkswagen Group Australia's Salesforce programs across VGA, VWFS, Audi, and Skoda from 2023 to 2026.</p>
+      <p>The Agentforce ROI Calculator is grounded in the POC I led — one of Australia's first Agentforce AI agent implementations. The Risk Radar uses the same heat map approach I apply on every enterprise engagement. The Stakeholder Mapper reflects how I actually run power/interest sessions with multi-brand client groups.</p>
+      <p><strong>Bharani Bussari</strong> · Senior Salesforce Delivery Manager · Sydney, AU<br>
+      <a href="mailto:bharani.bussari@gmail.com">bharani.bussari@gmail.com</a> ·
+      <a href="https://linkedin.com/in/bharani-bussari-75201523" target="_blank">LinkedIn</a></p>
+    </div>
+    <ul class="proof-list">
+      <li>$6M in project revenue managed at Katzion (GlobalLogic) with CSAT 5/5 across all engagements</li>
+      <li>Einstein Analytics for Dealers — recognised as VW Group Global Best Productivity Initiative worldwide</li>
+      <li>One of Australia's first Agentforce Specialist-certified delivery managers</li>
+      <li>Led Audi and Skoda legal data migrations with zero compliance incidents</li>
+      <li>AI-augmented delivery: user story cycles compressed from 2 weeks → 2 days (Client Impact Award, Katzion)</li>
+      <li>Connected Cars MuleSoft integration — 30% UX improvement; eShop — 7% accessories uplift month one</li>
+      <li>18 years across automotive, financial services, healthcare, aged care, and NGO sectors</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  Bharani PM Intelligence Suite · Built with Claude AI ·
+  <a href="mailto:bharani.bussari@gmail.com">bharani.bussari@gmail.com</a>
+</footer>
+
+</body>
+</html>

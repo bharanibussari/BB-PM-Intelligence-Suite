@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Health Dashboard — Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+  .topbar{background:#1a1a1a;color:#fff;padding:12px 2rem;display:flex;align-items:center;justify-content:space-between}
+  .topbar .back{font-size:12px;color:#aaa;text-decoration:none}.topbar .back:hover{color:#fff}
+  .topbar .tool-name{font-size:14px;font-weight:500}
+  .topbar .brand{font-size:13px;opacity:0.6;letter-spacing:0.05em;text-transform:uppercase}
+  .container{max-width:1050px;margin:0 auto;padding:2rem}
+  h1{font-size:26px;font-weight:600;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#666;margin-bottom:1.5rem}
+  .project-select-row{display:flex;align-items:center;gap:12px;margin-bottom:2rem;flex-wrap:wrap}
+  .project-select-row select{padding:8px 12px;border:1px solid #e0e0db;border-radius:8px;font-size:14px;background:#fff;font-family:inherit;outline:none;min-width:260px}
+  .project-select-row .add-proj-btn{padding:8px 16px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer}
+  .project-select-row .del-proj-btn{padding:8px 16px;font-size:13px;font-weight:500;background:none;border:1px solid #e0e0db;border-radius:8px;cursor:pointer;color:#dc2626}
+  .rag-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:2rem}
+  .rag-card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:1.25rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;position:relative}
+  .rag-card:hover{box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+  .rag-card .area{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+  .rag-card .rag-dot{width:32px;height:32px;border-radius:50%;display:inline-block;margin-bottom:8px}
+  .rag-card .rag-label{font-size:15px;font-weight:600}
+  .rag-card .rag-comment{font-size:12px;color:#888;margin-top:4px;line-height:1.5}
+  .rag-R{border-left:4px solid #dc2626}
+  .rag-A{border-left:4px solid #d97706}
+  .rag-G{border-left:4px solid #16a34a}
+  .dot-R{background:#dc2626}
+  .dot-A{background:#d97706}
+  .dot-G{background:#16a34a}
+  .label-R{color:#dc2626}
+  .label-A{color:#d97706}
+  .label-G{color:#16a34a}
+  .edit-overlay{position:absolute;top:8px;right:8px;opacity:0;transition:opacity 0.15s}
+  .rag-card:hover .edit-overlay{opacity:1}
+  .edit-btn{background:#f0f0ec;border:none;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;color:#444}
+  .panel{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+  .panel-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+  .highlight-report{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+  .form-row{margin-bottom:0.75rem}
+  .form-row label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+  .form-row input,.form-row select,.form-row textarea{width:100%;padding:7px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;outline:none}
+  .form-row textarea{min-height:70px;resize:vertical}
+  .form-row input:focus,.form-row textarea:focus{border-color:#1a1a1a}
+  .generated-report{background:#f8f8f6;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem;font-size:13px;line-height:1.7;white-space:pre-wrap;margin-bottom:1rem;min-height:120px;color:#333}
+  .copy-btn,.export-btn{padding:8px 16px;font-size:12px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:7px;cursor:pointer;margin-right:8px}
+  .copy-btn:hover,.export-btn:hover{opacity:0.85}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal{background:#fff;border-radius:14px;padding:1.5rem;width:420px;max-width:90vw}
+  .modal h2{font-size:16px;font-weight:600;margin-bottom:1rem}
+  .modal-btns{display:flex;gap:8px;margin-top:1rem;justify-content:flex-end}
+  .btn-primary{padding:8px 18px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer}
+  .btn-secondary{padding:8px 18px;font-size:13px;background:none;border:1px solid #e0e0db;border-radius:8px;cursor:pointer;color:#444}
+  .rag-toggle{display:flex;gap:6px;margin-top:4px}
+  .rag-toggle button{padding:5px 14px;border-radius:20px;border:1.5px solid #e0e0db;font-size:13px;font-weight:600;cursor:pointer;background:#fff;transition:all 0.15s}
+  .rag-toggle button.active-R{background:#fee2e2;border-color:#dc2626;color:#dc2626}
+  .rag-toggle button.active-A{background:#fef3c7;border-color:#d97706;color:#d97706}
+  .rag-toggle button.active-G{background:#d1fae5;border-color:#16a34a;color:#16a34a}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" class="back">← All tools</a>
+  <span class="tool-name">Project Health Dashboard</span>
+  <span class="brand">Bharani PM Suite</span>
+</div>
+
+<div class="container">
+  <h1>Project Health Dashboard</h1>
+  <p class="subtitle">RAG status tracker · Steering committee highlight report generator</p>
+
+  <div class="project-select-row">
+    <select id="project-sel" onchange="loadProject()"></select>
+    <button class="add-proj-btn" onclick="newProject()">+ New project</button>
+    <button class="del-proj-btn" onclick="deleteProject()">Delete project</button>
+  </div>
+
+  <div class="rag-grid" id="rag-grid"></div>
+
+  <div class="highlight-report">
+    <div class="panel">
+      <div class="panel-title">Report inputs</div>
+      <div class="form-row"><label>Week / period</label><input type="text" id="rpt-period" placeholder="e.g. Week 24 — 23 Jun 2025" oninput="generateReport()"></div>
+      <div class="form-row"><label>Key accomplishments this week</label><textarea id="rpt-wins" placeholder="e.g. eShop UAT completed with 0 critical defects" oninput="generateReport()"></textarea></div>
+      <div class="form-row"><label>Actions / decisions needed from steering committee</label><textarea id="rpt-actions" placeholder="e.g. Approve Phase 2 SOW extension; sign off go-live date" oninput="generateReport()"></textarea></div>
+      <div class="form-row"><label>Upcoming milestones</label><textarea id="rpt-milestones" placeholder="e.g. Go-live: 30 Jun; Hypercare end: 14 Jul" oninput="generateReport()"></textarea></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Highlight report — ready to send</div>
+      <div class="generated-report" id="generated-report">Fill in the report inputs and update your RAG statuses to generate a steering committee highlight report.</div>
+      <button class="copy-btn" onclick="copyReport()">Copy report</button>
+      <button class="export-btn" onclick="exportReport()">↓ Export .txt</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2 id="modal-title">Edit status</h2>
+    <div class="form-row">
+      <label>RAG status</label>
+      <div class="rag-toggle" id="rag-toggle">
+        <button onclick="setModalRAG('G')" id="rag-G">Green</button>
+        <button onclick="setModalRAG('A')" id="rag-A">Amber</button>
+        <button onclick="setModalRAG('R')" id="rag-R">Red</button>
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:0.75rem"><label>Comment</label><textarea id="modal-comment" rows="3" placeholder="Brief status comment for the highlight report"></textarea></div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const AREAS=['Schedule','Budget','Scope','Resources','Stakeholders','Quality','Risks','Integrations','Change management'];
+const RAG_LABELS={G:'Green — on track',A:'Amber — monitor',R:'Red — escalate'};
+
+let projects={};
+let currentProject='VGA eShop';
+let editingArea=null;
+let modalRAG='G';
+
+function defaultProject(name){
+  return{
+    name,
+    statuses:Object.fromEntries(AREAS.map(a=>[a,{rag:'G',comment:''}])),
+    period:'',wins:'',actions:'',milestones:''
+  };
+}
+
+function initProjects(){
+  const p=defaultProject('VGA eShop');
+  p.statuses.Schedule={rag:'G',comment:'All milestones on track — go-live confirmed 30 Jun'};
+  p.statuses.Budget={rag:'G',comment:'Tracking within approved budget; $40K contingency remaining'};
+  p.statuses.Stakeholders={rag:'A',comment:'Dealer network lead raised concerns — hands-on demo scheduled this week'};
+  p.statuses.Integrations={rag:'A',comment:'SAP cutover dependency — client confirmation expected by Fri'};
+  p.statuses['Change management']={rag:'G',comment:'Training sessions completed for 42/45 dealer users'};
+  p.period='Week 22 — 9 Jun 2025';
+  p.wins='UAT completed with zero critical defects. Training sessions delivered to 42 dealer users.';
+  p.actions='Approve Phase 2 SOW (attached). Confirm SAP cutover date with client IT.';
+  p.milestones='Go-live: 30 Jun · Hypercare: 1–14 Jul · Phase 2 kickoff: 21 Jul';
+  projects['VGA eShop']=p;
+
+  const p2=defaultProject('Audi Data Migration');
+  p2.statuses.Risks={rag:'A',comment:'Legal sign-off on customer data handling — in review'};
+  p2.statuses['Change management']={rag:'R',comment:'Audi brand team readiness below target — escalation required'};
+  projects['Audi Data Migration']=p2;
+
+  renderProjectSelect();
+  loadProject();
+}
+
+function renderProjectSelect(){
+  const sel=document.getElementById('project-sel');
+  sel.innerHTML=Object.keys(projects).map(k=>`<option${k===currentProject?' selected':''}>${k}</option>`).join('');
+}
+
+function loadProject(){
+  currentProject=document.getElementById('project-sel').value;
+  const p=projects[currentProject];
+  document.getElementById('rpt-period').value=p.period||'';
+  document.getElementById('rpt-wins').value=p.wins||'';
+  document.getElementById('rpt-actions').value=p.actions||'';
+  document.getElementById('rpt-milestones').value=p.milestones||'';
+  renderGrid();generateReport();
+}
+
+function saveCurrentInputs(){
+  const p=projects[currentProject];
+  p.period=document.getElementById('rpt-period').value;
+  p.wins=document.getElementById('rpt-wins').value;
+  p.actions=document.getElementById('rpt-actions').value;
+  p.milestones=document.getElementById('rpt-milestones').value;
+}
+
+['rpt-period','rpt-wins','rpt-actions','rpt-milestones'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{saveCurrentInputs();generateReport();});
+});
+
+function renderGrid(){
+  const p=projects[currentProject];
+  document.getElementById('rag-grid').innerHTML=AREAS.map(area=>{
+    const s=p.statuses[area];
+    return `<div class="rag-card rag-${s.rag}" onclick="openModal('${area}')">
+      <div class="area">${area}</div>
+      <div class="rag-dot dot-${s.rag}"></div>
+      <div class="rag-label label-${s.rag}">${s.rag==='G'?'Green':s.rag==='A'?'Amber':'Red'}</div>
+      <div class="rag-comment">${s.comment||'Click to add comment'}</div>
+      <div class="edit-overlay"><button class="edit-btn">Edit</button></div>
+    </div>`;
+  }).join('');
+}
+
+function generateReport(){
+  const p=projects[currentProject];
+  if(!p)return;
+  const ragSummary=AREAS.map(a=>{
+    const s=p.statuses[a];
+    return `  ${a.padEnd(20)} [${s.rag}] ${s.comment||''}`;
+  }).join('\n');
+  const ambers=AREAS.filter(a=>p.statuses[a].rag==='A');
+  const reds=AREAS.filter(a=>p.statuses[a].rag==='R');
+
+  let report=`PROJECT HIGHLIGHT REPORT\n`;
+  report+=`Project: ${p.name} | ${p.period||'[period]'}\n`;
+  report+=`Prepared by: Bharani Bussari, Senior PM\n`;
+  report+=`${'─'.repeat(52)}\n\n`;
+  report+=`RAG STATUS SUMMARY\n${ragSummary}\n\n`;
+  if(reds.length)report+=`⚠ ESCALATIONS (Red): ${reds.join(', ')}\n`;
+  if(ambers.length)report+=`⚑ MONITORING (Amber): ${ambers.join(', ')}\n`;
+  report+=`\nACCOMPLISHMENTS\n${p.wins||'[No wins entered]'}\n\n`;
+  report+=`STEERING COMMITTEE — ACTIONS / DECISIONS NEEDED\n${p.actions||'[No actions entered]'}\n\n`;
+  report+=`UPCOMING MILESTONES\n${p.milestones||'[No milestones entered]'}\n`;
+
+  document.getElementById('generated-report').textContent=report;
+}
+
+function openModal(area){
+  editingArea=area;
+  const p=projects[currentProject];
+  const s=p.statuses[area];
+  document.getElementById('modal-title').textContent='Edit: '+area;
+  document.getElementById('modal-comment').value=s.comment||'';
+  modalRAG=s.rag;
+  updateModalToggle();
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+function setModalRAG(rag){modalRAG=rag;updateModalToggle();}
+function updateModalToggle(){
+  ['G','A','R'].forEach(r=>{
+    const btn=document.getElementById('rag-'+r);
+    btn.className=modalRAG===r?'active-'+r:'';
+  });
+}
+
+function saveModal(){
+  const p=projects[currentProject];
+  p.statuses[editingArea]={rag:modalRAG,comment:document.getElementById('modal-comment').value};
+  closeModal();renderGrid();generateReport();
+}
+
+function newProject(){
+  const name=prompt('New project name:');
+  if(!name||!name.trim())return;
+  projects[name.trim()]=defaultProject(name.trim());
+  currentProject=name.trim();
+  renderProjectSelect();loadProject();
+}
+
+function deleteProject(){
+  if(Object.keys(projects).length<=1){alert('Cannot delete the last project.');return;}
+  if(!confirm('Delete "'+currentProject+'"?'))return;
+  delete projects[currentProject];
+  currentProject=Object.keys(projects)[0];
+  renderProjectSelect();loadProject();
+}
+
+function copyReport(){
+  navigator.clipboard.writeText(document.getElementById('generated-report').textContent).then(()=>{
+    const btn=document.querySelector('.copy-btn');
+    btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy report',2000);
+  });
+}
+
+function exportReport(){
+  const text=document.getElementById('generated-report').textContent;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(text);
+  a.download='highlight-report.txt';a.click();
+}
+
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+initProjects();
+</script>
+</body>
+</html>

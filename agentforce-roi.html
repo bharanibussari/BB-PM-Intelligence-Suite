@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentforce ROI Calculator — Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+  .topbar{background:#1a1a1a;color:#fff;padding:12px 2rem;display:flex;align-items:center;justify-content:space-between}
+  .topbar .back{font-size:12px;color:#aaa;text-decoration:none}.topbar .back:hover{color:#fff}
+  .topbar .tool-name{font-size:14px;font-weight:500}
+  .topbar .brand{font-size:13px;opacity:0.6;letter-spacing:0.05em;text-transform:uppercase}
+  .container{max-width:960px;margin:0 auto;padding:2rem}
+  h1{font-size:26px;font-weight:600;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#666;margin-bottom:2rem}
+  .badge-ai{display:inline-flex;align-items:center;gap:6px;background:#1a1a1a;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;margin-bottom:1.5rem}
+  .layout{display:grid;grid-template-columns:380px 1fr;gap:1.5rem}
+  .panel{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+  .panel-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+  .form-row{margin-bottom:0.75rem}
+  .form-row label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+  .form-row input,.form-row select{width:100%;padding:7px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;outline:none}
+  .form-row input:focus{border-color:#1a1a1a}
+  .slider-row{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
+  .slider-row label{font-size:12px;color:#666;flex:1}
+  .slider-row input[type=range]{width:120px;accent-color:#1a1a1a}
+  .slider-row .val{font-size:13px;font-weight:600;width:60px;text-align:right}
+  .use-cases{margin-top:0}
+  .use-case{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0ec}
+  .use-case:last-child{border-bottom:none}
+  .use-case label{flex:1;font-size:13px;cursor:pointer}
+  .use-case input[type=checkbox]{accent-color:#1a1a1a;width:14px;height:14px;cursor:pointer}
+  .use-case .saving{font-size:12px;color:#666;background:#f0f0ec;padding:2px 8px;border-radius:12px}
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
+  .kpi{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1rem 1.25rem;text-align:center}
+  .kpi .num{font-size:30px;font-weight:700;margin-bottom:3px}
+  .kpi .lbl{font-size:12px;color:#888}
+  .kpi.highlight{background:#1a1a1a;border-color:#1a1a1a}
+  .kpi.highlight .num{color:#fff}
+  .kpi.highlight .lbl{color:#888}
+  .kpi.green{background:#f0fdf4;border-color:#86efac}
+  .kpi.green .num{color:#166534}
+  .kpi.green .lbl{color:#166534}
+  .chart-wrap{position:relative;width:100%;height:240px;margin:1rem 0}
+  .breakdown-list{margin-top:0}
+  .bd-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0ec;font-size:13px}
+  .bd-item:last-child{border-bottom:none}
+  .bd-bar-wrap{flex:1;background:#f0f0ec;border-radius:4px;height:8px;overflow:hidden}
+  .bd-bar{height:100%;background:#1a1a1a;border-radius:4px;transition:width 0.4s}
+  .bd-val{font-weight:600;min-width:80px;text-align:right}
+  .export-btn{padding:9px 18px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:1rem}
+  .vga-note{background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:12px;font-size:12px;color:#92400e;margin-bottom:1.5rem}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" class="back">← All tools</a>
+  <span class="tool-name">Agentforce ROI Calculator</span>
+  <span class="brand">Bharani PM Suite</span>
+</div>
+
+<div class="container">
+  <h1>Agentforce ROI Calculator</h1>
+  <p class="subtitle">Build the business case for AI agent automation in Salesforce delivery</p>
+  <div class="badge-ai">★ Agentforce Specialist — one of Australia's first implementations</div>
+
+  <div class="vga-note">
+    Based on real-world results from the VGA Agentforce POC — test-drive booking automation and warranty claims processing for Volkswagen Group Australia dealer network.
+  </div>
+
+  <div class="layout">
+    <div>
+      <div class="panel">
+        <div class="panel-title">Organisation parameters</div>
+        <div class="form-row"><label>Organisation name</label><input type="text" id="org-name" value="Volkswagen Group Australia" oninput="recalc()"></div>
+        <div class="form-row"><label>Industry</label>
+          <select id="industry" onchange="recalc()">
+            <option>Automotive</option><option>Financial services</option><option>Healthcare</option>
+            <option>NGO / Not-for-profit</option><option>Retail / E-commerce</option><option>Government</option>
+          </select>
+        </div>
+        <div class="slider-row"><label>Total agents / reps affected</label><input type="range" min="10" max="500" value="120" id="agents" step="10" oninput="document.getElementById('agents-v').textContent=this.value;recalc()"><span class="val" id="agents-v">120</span></div>
+        <div class="slider-row"><label>Avg. fully-loaded cost / agent / year ($AUD)</label><input type="range" min="60000" max="200000" value="90000" id="agent-cost" step="5000" oninput="document.getElementById('agent-cost-v').textContent='$'+Math.round(this.value/1000)+'K';recalc()"><span class="val" id="agent-cost-v">$90K</span></div>
+        <div class="slider-row"><label>Manual tasks automatable (%)</label><input type="range" min="5" max="60" value="30" id="auto-pct" step="5" oninput="document.getElementById('auto-v').textContent=this.value+'%';recalc()"><span class="val" id="auto-v">30%</span></div>
+        <div class="slider-row"><label>Agentforce licence cost / agent / year</label><input type="range" min="500" max="5000" value="2000" id="licence" step="100" oninput="document.getElementById('lic-v').textContent='$'+this.value;recalc()"><span class="val" id="lic-v">$2000</span></div>
+        <div class="form-row"><label>Implementation cost ($AUD)</label><input type="number" id="impl-cost" value="250000" oninput="recalc()"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Select AI use cases</div>
+        <div class="use-cases" id="use-cases"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div class="panel">
+        <div class="panel-title">Annual savings breakdown</div>
+        <div class="breakdown-list" id="breakdown"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">3-year cumulative ROI projection</div>
+        <div class="chart-wrap"><canvas id="roi-chart" role="img" aria-label="3-year ROI projection chart"></canvas></div>
+      </div>
+      <button class="export-btn" onclick="exportBizCase()">↓ Export business case summary</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const USE_CASES=[
+  {id:'booking',label:'Automated booking & scheduling (test-drives, appointments)',pct:0.15,note:'VGA result: 40% reduction in manual booking effort'},
+  {id:'warranty',label:'Warranty claims triage & auto-routing',pct:0.12,note:'VGA result: 25% faster resolution time'},
+  {id:'case',label:'Case classification & initial response',pct:0.18,note:'Industry benchmark: 35% reduction in handling time'},
+  {id:'onboard',label:'Customer / dealer onboarding automation',pct:0.10,note:'Reduces manual data entry by ~60%'},
+  {id:'escalation',label:'Intelligent escalation & sentiment detection',pct:0.08,note:'Reduces misrouting by ~45%'},
+  {id:'reporting',label:'Automated KPI reporting & data extraction',pct:0.20,note:'Bharani result: 2-week cycle → 2 days with AI'},
+  {id:'followup',label:'Follow-up & next best action prompts',pct:0.09,note:'Increases task completion rate by ~28%'},
+];
+
+let selected=new Set(['booking','warranty','reporting']);
+let chart=null;
+
+function initUseCases(){
+  document.getElementById('use-cases').innerHTML=USE_CASES.map(uc=>`
+    <div class="use-case">
+      <input type="checkbox" id="uc-${uc.id}" ${selected.has(uc.id)?'checked':''} onchange="toggleUC('${uc.id}')">
+      <label for="uc-${uc.id}"><strong>${uc.label}</strong><br><span style="font-size:11px;color:#888">${uc.note}</span></label>
+    </div>`).join('');
+}
+
+function toggleUC(id){
+  if(selected.has(id))selected.delete(id);else selected.add(id);
+  recalc();
+}
+
+function recalc(){
+  const agents=parseInt(document.getElementById('agents').value);
+  const agentCost=parseInt(document.getElementById('agent-cost').value);
+  const autoPct=parseInt(document.getElementById('auto-pct').value)/100;
+  const licencePer=parseInt(document.getElementById('licence').value);
+  const implCost=parseInt(document.getElementById('impl-cost').value)||250000;
+
+  const totalLaborCost=agents*agentCost;
+  const totalPct=USE_CASES.filter(uc=>selected.has(uc.id)).reduce((a,uc)=>a+uc.pct,0);
+  const cappedPct=Math.min(totalPct,autoPct);
+  const laborSaving=Math.round(totalLaborCost*cappedPct);
+  const licenceCost=agents*licencePer;
+  const netYear1=laborSaving-licenceCost-implCost;
+  const netYear2=laborSaving-licenceCost;
+  const netYear3=laborSaving-licenceCost;
+  const roi3=Math.round(((netYear1+netYear2+netYear3)/(implCost+licenceCost*3))*100);
+  const payback=implCost/(laborSaving-licenceCost);
+
+  document.getElementById('kpi-grid').innerHTML=`
+    <div class="kpi"><div class="num">$${Math.round(laborSaving/1000)}K</div><div class="lbl">Annual labour saving</div></div>
+    <div class="kpi"><div class="num">$${Math.round(netYear1/1000)}K</div><div class="lbl">Net saving year 1</div></div>
+    <div class="kpi green"><div class="num">${roi3}%</div><div class="lbl">3-year ROI</div></div>
+    <div class="kpi highlight"><div class="num">${payback>0?payback.toFixed(1)+'yr':'< 1yr'}</div><div class="lbl">Payback period</div></div>
+  `;
+
+  const items=USE_CASES.filter(uc=>selected.has(uc.id)).map(uc=>({
+    label:uc.label.split('(')[0].trim(),
+    val:Math.round(totalLaborCost*uc.pct)
+  }));
+  const maxVal=Math.max(...items.map(i=>i.val),1);
+  document.getElementById('breakdown').innerHTML=items.map(item=>`
+    <div class="bd-item">
+      <div style="flex:0 0 200px;font-size:12px">${item.label}</div>
+      <div class="bd-bar-wrap"><div class="bd-bar" style="width:${Math.round(item.val/maxVal*100)}%"></div></div>
+      <div class="bd-val">$${Math.round(item.val/1000)}K</div>
+    </div>`).join('');
+
+  renderChart([netYear1,netYear1+netYear2,netYear1+netYear2+netYear3],implCost);
+}
+
+function renderChart(cumulative,impl){
+  const ctx=document.getElementById('roi-chart').getContext('2d');
+  if(chart)chart.destroy();
+  chart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['Year 1','Year 2','Year 3'],
+      datasets:[
+        {label:'Cumulative net saving',data:cumulative,backgroundColor:cumulative.map(v=>v>=0?'#166534':'#991b1b'),borderWidth:0},
+        {label:'Break-even',data:[0,0,0],type:'line',borderColor:'#888',borderDash:[4,4],borderWidth:1.5,pointRadius:0}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{
+          ticks:{callback:v=>'$'+Math.round(v/1000)+'K'},
+          grid:{color:'#f0f0ec'}
+        },
+        x:{grid:{display:false}}
+      }
+    }
+  });
+}
+
+function exportBizCase(){
+  const org=document.getElementById('org-name').value||'Organisation';
+  const agents=document.getElementById('agents').value;
+  const useCasesSelected=USE_CASES.filter(uc=>selected.has(uc.id)).map(uc=>uc.label).join('\n  ');
+  let txt=`AGENTFORCE BUSINESS CASE — ${org}\nPrepared by: Bharani Bussari, Agentforce Specialist\nDate: ${new Date().toLocaleDateString('en-AU')}\n\n`;
+  txt+=`SCOPE\nAgents affected: ${agents}\nSelected use cases:\n  ${useCasesSelected}\n\n`;
+  txt+=`REFERENCE IMPLEMENTATION\nVGA Agentforce POC: dealer test-drive booking and warranty claims automation, Volkswagen Group Australia (2025)\n\n`;
+  txt+=`For full financials, refer to the interactive calculator.\n`;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='agentforce-business-case.txt';a.click();
+}
+
+initUseCases();
+recalc();
+</script>
+</body>
+</html>

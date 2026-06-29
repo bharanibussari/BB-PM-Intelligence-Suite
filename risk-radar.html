@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Radar — Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+  .topbar{background:#1a1a1a;color:#fff;padding:12px 2rem;display:flex;align-items:center;justify-content:space-between}
+  .topbar .brand{font-size:13px;opacity:0.6;letter-spacing:0.05em;text-transform:uppercase}
+  .topbar .tool-name{font-size:14px;font-weight:500}
+  .topbar .back{font-size:12px;color:#aaa;text-decoration:none}
+  .topbar .back:hover{color:#fff}
+  .container{max-width:1100px;margin:0 auto;padding:2rem}
+  h1{font-size:26px;font-weight:600;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#666;margin-bottom:2rem}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+  .stat{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1rem 1.25rem}
+  .stat .num{font-size:28px;font-weight:600}
+  .stat .lbl{font-size:12px;color:#888;margin-top:2px}
+  .main-grid{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;margin-bottom:1.5rem}
+  .panel{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem}
+  .panel-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+  .form-row{margin-bottom:0.75rem}
+  .form-row label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+  .form-row input,.form-row select,.form-row textarea{width:100%;padding:7px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;outline:none;transition:border-color 0.15s}
+  .form-row input:focus,.form-row select:focus{border-color:#1a1a1a}
+  .slider-row{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
+  .slider-row label{font-size:12px;color:#666;width:70px;flex-shrink:0}
+  .slider-row input[type=range]{flex:1;accent-color:#1a1a1a}
+  .slider-row .val{font-size:13px;font-weight:600;width:14px}
+  .add-btn{width:100%;padding:9px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:0.5rem;transition:opacity 0.15s}
+  .add-btn:hover{opacity:0.85}
+  .heat-wrap{display:flex;gap:8px;align-items:flex-start}
+  .y-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;color:#888;text-align:center;width:16px;flex-shrink:0;margin-top:20px}
+  .heat-inner{flex:1}
+  .heat-map{display:grid;grid-template-columns:20px repeat(5,1fr);gap:3px}
+  .heat-cell{aspect-ratio:1;border-radius:5px;position:relative;display:flex;align-items:center;justify-content:center;min-height:44px}
+  .ax-y{display:flex;align-items:center;justify-content:center;font-size:11px;color:#888}
+  .ax-x-row{display:grid;grid-template-columns:20px repeat(5,1fr);gap:3px;margin-top:4px}
+  .ax-x{text-align:center;font-size:11px;color:#888}
+  .x-label{text-align:center;font-size:11px;color:#888;margin-top:6px;grid-column:2/-1}
+  .risk-dot{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;cursor:pointer;position:absolute;transition:transform 0.15s;z-index:2}
+  .risk-dot:hover{transform:scale(1.3)}
+  .risk-list-panel{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem}
+  .risk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0ec}
+  .risk-item:last-child{border-bottom:none}
+  .risk-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px}
+  .risk-body{flex:1;min-width:0}
+  .risk-desc{font-size:13px;font-weight:500}
+  .risk-meta{font-size:11px;color:#888;margin-top:3px}
+  .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+  .badge-critical{background:#fee2e2;color:#991b1b}
+  .badge-high{background:#fef3c7;color:#92400e}
+  .badge-medium{background:#d1fae5;color:#065f46}
+  .badge-low{background:#dbeafe;color:#1e40af}
+  .del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;line-height:1;padding:0 2px;flex-shrink:0}
+  .del-btn:hover{color:#dc2626}
+  .export-btn{margin-top:1rem;padding:8px 16px;font-size:12px;font-weight:500;background:none;border:1px solid #e0e0db;border-radius:7px;cursor:pointer;color:#444;transition:background 0.15s}
+  .export-btn:hover{background:#f0f0ec}
+  .empty{font-size:13px;color:#aaa;padding:1.5rem 0;text-align:center}
+  .preview-ring{outline:3px solid #1a1a1a;outline-offset:1px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" class="back">← All tools</a>
+  <span class="tool-name">Risk Radar</span>
+  <span class="brand">Bharani PM Suite</span>
+</div>
+
+<div class="container">
+  <h1>Risk Radar</h1>
+  <p class="subtitle">Dynamic risk register with heat map scoring · Enterprise Salesforce delivery</p>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="s-total">0</div><div class="lbl">Total risks</div></div>
+    <div class="stat"><div class="num" id="s-critical" style="color:#991b1b">0</div><div class="lbl">Critical (score ≥20)</div></div>
+    <div class="stat"><div class="num" id="s-high" style="color:#92400e">0</div><div class="lbl">High (score ≥12)</div></div>
+    <div class="stat"><div class="num" id="s-avg">—</div><div class="lbl">Average score</div></div>
+  </div>
+
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-title">Log a risk</div>
+      <div class="form-row"><label>Risk description</label><input type="text" id="risk-desc" placeholder="e.g. SAP integration dependency"></div>
+      <div class="form-row">
+        <label>Category</label>
+        <select id="risk-cat">
+          <option>Integration</option><option>Stakeholder</option><option>Resource</option>
+          <option>Scope</option><option>Compliance</option><option>Technical</option><option>Commercial</option>
+        </select>
+      </div>
+      <div class="slider-row">
+        <label>Likelihood</label>
+        <input type="range" min="1" max="5" value="3" id="risk-l" step="1">
+        <span class="val" id="lv">3</span>
+      </div>
+      <div class="slider-row">
+        <label>Impact</label>
+        <input type="range" min="1" max="5" value="3" id="risk-i" step="1">
+        <span class="val" id="iv">3</span>
+      </div>
+      <div class="form-row"><label>Owner</label><input type="text" id="risk-owner" placeholder="e.g. Bharani / Tech Lead"></div>
+      <div class="form-row"><label>Mitigation action</label><input type="text" id="risk-mit" placeholder="e.g. Weekly integration checkpoint"></div>
+      <button class="add-btn" onclick="addRisk()">+ Add to register</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Heat map — likelihood × impact</div>
+      <div class="heat-wrap">
+        <div class="y-label">Likelihood ↑</div>
+        <div class="heat-inner">
+          <div class="heat-map" id="heat-map"></div>
+          <div class="ax-x-row">
+            <div></div>
+            <div class="ax-x">1</div><div class="ax-x">2</div><div class="ax-x">3</div><div class="ax-x">4</div><div class="ax-x">5</div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:#888;margin-top:4px;margin-left:20px">Impact →</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap">
+        <span style="font-size:11px;color:#888;display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#fca5a5;display:inline-block"></span>Critical ≥20</span>
+        <span style="font-size:11px;color:#888;display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#fcd34d;display:inline-block"></span>High ≥12</span>
+        <span style="font-size:11px;color:#888;display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#6ee7b7;display:inline-block"></span>Medium ≥6</span>
+        <span style="font-size:11px;color:#888;display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#93c5fd;display:inline-block"></span>Low</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="risk-list-panel">
+    <div class="panel-title">Risk register — sorted by score (highest first)</div>
+    <div id="risk-list"><div class="empty">No risks logged yet. Add your first risk above.</div></div>
+    <button class="export-btn" onclick="exportCSV()">↓ Export CSV</button>
+  </div>
+</div>
+
+<script>
+const CATS={Integration:'#3b82f6',Stakeholder:'#ec4899',Resource:'#f59e0b',Scope:'#f97316',Compliance:'#8b5cf6',Technical:'#14b8a6',Commercial:'#84cc16'};
+let risks=[],id=1;
+
+document.getElementById('risk-l').oninput=function(){document.getElementById('lv').textContent=this.value;renderHeat()};
+document.getElementById('risk-i').oninput=function(){document.getElementById('iv').textContent=this.value;renderHeat()};
+
+function cellBg(s){if(s>=20)return'#fca5a5';if(s>=12)return'#fcd34d';if(s>=6)return'#6ee7b7';return'#93c5fd';}
+function scoreLabel(s){if(s>=20)return'Critical';if(s>=12)return'High';if(s>=6)return'Medium';return'Low';}
+function badgeClass(s){if(s>=20)return'badge-critical';if(s>=12)return'badge-high';if(s>=6)return'badge-medium';return'badge-low';}
+
+function renderHeat(){
+  const m=document.getElementById('heat-map');
+  m.innerHTML='';
+  const cl=parseInt(document.getElementById('risk-l').value);
+  const ci=parseInt(document.getElementById('risk-i').value);
+  const cellMap={};
+  risks.forEach(r=>{const k=r.l+','+r.i;if(!cellMap[k])cellMap[k]=[];cellMap[k].push(r);});
+  for(let l=5;l>=1;l--){
+    const axel=document.createElement('div');
+    axel.className='ax-y';axel.textContent=l;m.appendChild(axel);
+    for(let i=1;i<=5;i++){
+      const cell=document.createElement('div');
+      cell.className='heat-cell';
+      cell.style.background=cellBg(l*i);
+      if(l===cl&&i===ci)cell.classList.add('preview-ring');
+      const k=l+','+i;
+      if(cellMap[k])cellMap[k].forEach((r,idx)=>{
+        const dot=document.createElement('div');
+        dot.className='risk-dot';
+        dot.style.background=CATS[r.cat]||'#666';
+        dot.style.left=(6+idx*12)+'px';
+        dot.textContent=r.id;
+        dot.title=r.desc+'\nOwner: '+r.owner+'\nScore: '+r.score;
+        cell.appendChild(dot);
+      });
+      m.appendChild(cell);
+    }
+  }
+}
+
+function addRisk(){
+  const desc=document.getElementById('risk-desc').value.trim();
+  if(!desc){document.getElementById('risk-desc').focus();return;}
+  const l=parseInt(document.getElementById('risk-l').value);
+  const i=parseInt(document.getElementById('risk-i').value);
+  risks.push({id:id++,desc,cat:document.getElementById('risk-cat').value,l,i,score:l*i,owner:document.getElementById('risk-owner').value||'Unassigned',mit:document.getElementById('risk-mit').value||'TBD'});
+  document.getElementById('risk-desc').value='';
+  document.getElementById('risk-owner').value='';
+  document.getElementById('risk-mit').value='';
+  renderAll();
+}
+
+function deleteRisk(rid){risks=risks.filter(r=>r.id!==rid);renderAll();}
+
+function renderList(){
+  const el=document.getElementById('risk-list');
+  if(!risks.length){el.innerHTML='<div class="empty">No risks logged yet.</div>';return;}
+  el.innerHTML=[...risks].sort((a,b)=>b.score-a.score).map(r=>`
+    <div class="risk-item">
+      <div class="risk-num" style="background:${CATS[r.cat]||'#666'}">${r.id}</div>
+      <div class="risk-body">
+        <div class="risk-desc">${r.desc}</div>
+        <div class="risk-meta">${r.cat} · Owner: ${r.owner} · Mitigation: ${r.mit}</div>
+      </div>
+      <span class="badge ${badgeClass(r.score)}">${scoreLabel(r.score)} (${r.score})</span>
+      <button class="del-btn" onclick="deleteRisk(${r.id})" aria-label="Delete">×</button>
+    </div>`).join('');
+}
+
+function renderStats(){
+  document.getElementById('s-total').textContent=risks.length;
+  document.getElementById('s-critical').textContent=risks.filter(r=>r.score>=20).length;
+  document.getElementById('s-high').textContent=risks.filter(r=>r.score>=12&&r.score<20).length;
+  document.getElementById('s-avg').textContent=risks.length?Math.round(risks.reduce((a,r)=>a+r.score,0)/risks.length):'—';
+}
+
+function renderAll(){renderHeat();renderList();renderStats();}
+
+function exportCSV(){
+  if(!risks.length)return;
+  const rows=[['ID','Description','Category','Likelihood','Impact','Score','Rating','Owner','Mitigation'],...risks.map(r=>[r.id,'"'+r.desc+'"',r.cat,r.l,r.i,r.score,scoreLabel(r.score),r.owner,'"'+r.mit+'"'])];
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n'));
+  a.download='risk-register.csv';a.click();
+}
+
+// Seed data
+risks=[
+  {id:id++,desc:'SAP integration dependency on client cutover readiness',cat:'Integration',l:4,i:5,score:20,owner:'Bharani',mit:'Weekly integration checkpoint; escalation to steering committee'},
+  {id:id++,desc:'Stakeholder conflict on Audi/Skoda data migration priority',cat:'Stakeholder',l:3,i:4,score:12,owner:'Bharani',mit:'Joint steering committee; shared risk view framing'},
+  {id:id++,desc:'Key architect shared across 3 delivery tracks',cat:'Resource',l:3,i:3,score:9,owner:'Tech Lead',mit:'Locked allocation confirmed in SOW'},
+  {id:id++,desc:'Scope creep from late Agentforce feature requests',cat:'Scope',l:4,i:3,score:12,owner:'Bharani',mit:'MoSCoW prioritisation in sprint planning; CRs for additions'},
+];
+renderAll();
+</script>
+</body>
+</html>

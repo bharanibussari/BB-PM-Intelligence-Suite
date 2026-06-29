@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stakeholder Mapper — Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+  .topbar{background:#1a1a1a;color:#fff;padding:12px 2rem;display:flex;align-items:center;justify-content:space-between}
+  .topbar .brand{font-size:13px;opacity:0.6;letter-spacing:0.05em;text-transform:uppercase}
+  .topbar .tool-name{font-size:14px;font-weight:500}
+  .topbar .back{font-size:12px;color:#aaa;text-decoration:none}
+  .topbar .back:hover{color:#fff}
+  .container{max-width:1100px;margin:0 auto;padding:2rem}
+  h1{font-size:26px;font-weight:600;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#666;margin-bottom:2rem}
+  .layout{display:grid;grid-template-columns:300px 1fr;gap:1.5rem}
+  .panel{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem}
+  .panel-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+  .form-row{margin-bottom:0.75rem}
+  .form-row label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+  .form-row input,.form-row select{width:100%;padding:7px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;outline:none}
+  .form-row input:focus{border-color:#1a1a1a}
+  .slider-row{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
+  .slider-row label{font-size:12px;color:#666;width:60px;flex-shrink:0}
+  .slider-row input[type=range]{flex:1;accent-color:#1a1a1a}
+  .slider-row .val{font-size:13px;font-weight:600;width:14px}
+  .add-btn{width:100%;padding:9px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:0.5rem}
+  .add-btn:hover{opacity:0.85}
+  .grid-container{position:relative;background:#fff;border:1px solid #e8e8e4;border-radius:10px;overflow:hidden}
+  .grid-area{position:relative;width:100%;padding-top:75%;min-height:420px}
+  canvas{position:absolute;top:0;left:0;width:100%;height:100%}
+  .quadrant-labels{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+  .q-label{position:absolute;font-size:11px;font-weight:600;color:#bbb;text-transform:uppercase;letter-spacing:0.06em}
+  .q-tl{top:8px;left:8px}
+  .q-tr{top:8px;right:8px;text-align:right}
+  .q-bl{bottom:8px;left:8px}
+  .q-br{bottom:8px;right:8px;text-align:right}
+  .axis-x{position:absolute;bottom:-22px;left:0;width:100%;text-align:center;font-size:11px;color:#888}
+  .axis-y{position:absolute;left:-22px;top:0;height:100%;display:flex;align-items:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;color:#888}
+  .axis-wrap{position:relative;padding:0 0 28px 28px;margin:1.25rem 1.25rem 0}
+  .stakeholder-list{margin-top:1.5rem;padding:0 1.25rem 1.25rem}
+  .sh-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0ec;font-size:12px}
+  .sh-item:last-child{border-bottom:none}
+  .sh-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+  .sh-name{flex:1;font-weight:500}
+  .sh-meta{color:#888}
+  .sh-strategy{background:#f0f0ec;border-radius:20px;padding:2px 8px;font-size:11px;color:#444}
+  .del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1}
+  .del-btn:hover{color:#dc2626}
+  .empty{font-size:13px;color:#aaa;padding:1rem 0;text-align:center}
+  .tooltip{position:fixed;background:#1a1a1a;color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;pointer-events:none;z-index:1000;display:none;max-width:220px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" class="back">← All tools</a>
+  <span class="tool-name">Stakeholder Influence Mapper</span>
+  <span class="brand">Bharani PM Suite</span>
+</div>
+
+<div class="container">
+  <h1>Stakeholder Influence Mapper</h1>
+  <p class="subtitle">Power / interest grid with engagement strategy · Hover dots to see details</p>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="panel-title">Add stakeholder</div>
+      <div class="form-row"><label>Name / role</label><input type="text" id="sh-name" placeholder="e.g. VGA CISO"></div>
+      <div class="form-row"><label>Organisation</label><input type="text" id="sh-org" placeholder="e.g. Volkswagen Group AU"></div>
+      <div class="form-row">
+        <label>Engagement strategy</label>
+        <select id="sh-strategy">
+          <option>Manage closely</option>
+          <option>Keep satisfied</option>
+          <option>Keep informed</option>
+          <option>Monitor</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Sentiment</label>
+        <select id="sh-sentiment">
+          <option value="champion">Champion</option>
+          <option value="supportive">Supportive</option>
+          <option value="neutral" selected>Neutral</option>
+          <option value="resistant">Resistant</option>
+          <option value="blocker">Blocker</option>
+        </select>
+      </div>
+      <div class="slider-row">
+        <label>Power</label>
+        <input type="range" min="1" max="10" value="5" id="sh-power" step="1">
+        <span class="val" id="pv">5</span>
+      </div>
+      <div class="slider-row">
+        <label>Interest</label>
+        <input type="range" min="1" max="10" value="5" id="sh-interest" step="1">
+        <span class="val" id="intv">5</span>
+      </div>
+      <div class="form-row"><label>Notes / action</label><input type="text" id="sh-notes" placeholder="e.g. Key sign-off on compliance"></div>
+      <button class="add-btn" onclick="addStakeholder()">+ Add stakeholder</button>
+    </div>
+
+    <div>
+      <div class="grid-container">
+        <div class="axis-wrap">
+          <div class="axis-y">Power →</div>
+          <div class="grid-area">
+            <canvas id="grid-canvas"></canvas>
+            <div class="quadrant-labels">
+              <div class="q-label q-tl">Monitor</div>
+              <div class="q-label q-tr">Manage closely</div>
+              <div class="q-label q-bl">Keep informed</div>
+              <div class="q-label q-br">Keep satisfied</div>
+            </div>
+          </div>
+          <div class="axis-x">Interest →</div>
+        </div>
+
+        <div class="stakeholder-list">
+          <div class="panel-title">Stakeholder register</div>
+          <div id="sh-list"><div class="empty">No stakeholders mapped yet.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const SENTIMENTS={
+  champion:{color:'#16a34a',label:'Champion'},
+  supportive:{color:'#2563eb',label:'Supportive'},
+  neutral:{color:'#78716c',label:'Neutral'},
+  resistant:{color:'#ea580c',label:'Resistant'},
+  blocker:{color:'#dc2626',label:'Blocker'}
+};
+let stakeholders=[],sid=1;
+
+document.getElementById('sh-power').oninput=function(){document.getElementById('pv').textContent=this.value};
+document.getElementById('sh-interest').oninput=function(){document.getElementById('intv').textContent=this.value};
+
+const canvas=document.getElementById('grid-canvas');
+const tooltip=document.getElementById('tooltip');
+let canvasRect;
+
+function resizeCanvas(){
+  const parent=canvas.parentElement;
+  canvas.width=parent.offsetWidth;
+  canvas.height=parent.offsetHeight;
+  canvasRect=canvas.getBoundingClientRect();
+  renderGrid();
+}
+
+function renderGrid(){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Quadrant backgrounds
+  ctx.fillStyle='#fffbeb'; ctx.fillRect(0,0,W/2,H/2); // top-left: low interest high power
+  ctx.fillStyle='#fef2f2'; ctx.fillRect(W/2,0,W/2,H/2); // top-right: high both
+  ctx.fillStyle='#f0f9ff'; ctx.fillRect(0,H/2,W/2,H/2); // bottom-left: low both
+  ctx.fillStyle='#f0fdf4'; ctx.fillRect(W/2,H/2,W/2,H/2); // bottom-right: high interest low power
+
+  // Dividers
+  ctx.strokeStyle='#e0e0db'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+
+  // Dots
+  stakeholders.forEach(sh=>{
+    const x=(sh.interest/10)*W;
+    const y=H-(sh.power/10)*H;
+    const s=SENTIMENTS[sh.sentiment];
+    ctx.beginPath();
+    ctx.arc(x,y,16,0,Math.PI*2);
+    ctx.fillStyle=s.color+'22';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x,y,14,0,Math.PI*2);
+    ctx.strokeStyle=s.color;
+    ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.fillStyle=s.color;
+    ctx.font='bold 10px -apple-system,sans-serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(sh.initials,x,y);
+  });
+}
+
+canvas.onmousemove=function(e){
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left;
+  const my=e.clientY-rect.top;
+  const W=canvas.width, H=canvas.height;
+  let found=null;
+  stakeholders.forEach(sh=>{
+    const x=(sh.interest/10)*W;
+    const y=H-(sh.power/10)*H;
+    if(Math.sqrt((mx-x)**2+(my-y)**2)<18)found=sh;
+  });
+  if(found){
+    const s=SENTIMENTS[found.sentiment];
+    tooltip.innerHTML=`<strong>${found.name}</strong><br>${found.org}<br>Power: ${found.power} · Interest: ${found.interest}<br>Sentiment: ${s.label}<br>${found.notes||''}`;
+    tooltip.style.display='block';
+    tooltip.style.left=(e.clientX+16)+'px';
+    tooltip.style.top=(e.clientY-10)+'px';
+  } else {
+    tooltip.style.display='none';
+  }
+};
+canvas.onmouseleave=function(){tooltip.style.display='none';};
+
+function getInitials(name){return name.split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2);}
+
+function addStakeholder(){
+  const name=document.getElementById('sh-name').value.trim();
+  if(!name){document.getElementById('sh-name').focus();return;}
+  stakeholders.push({
+    id:sid++,
+    name,initials:getInitials(name),
+    org:document.getElementById('sh-org').value||'—',
+    strategy:document.getElementById('sh-strategy').value,
+    sentiment:document.getElementById('sh-sentiment').value,
+    power:parseInt(document.getElementById('sh-power').value),
+    interest:parseInt(document.getElementById('sh-interest').value),
+    notes:document.getElementById('sh-notes').value
+  });
+  document.getElementById('sh-name').value='';
+  document.getElementById('sh-org').value='';
+  document.getElementById('sh-notes').value='';
+  renderAll();
+}
+
+function deleteStakeholder(id){stakeholders=stakeholders.filter(s=>s.id!==id);renderAll();}
+
+function renderList(){
+  const el=document.getElementById('sh-list');
+  if(!stakeholders.length){el.innerHTML='<div class="empty">No stakeholders mapped yet.</div>';return;}
+  el.innerHTML=stakeholders.map(sh=>{
+    const s=SENTIMENTS[sh.sentiment];
+    return `<div class="sh-item">
+      <div class="sh-dot" style="background:${s.color}"></div>
+      <div class="sh-name">${sh.name}</div>
+      <div class="sh-meta">${sh.org}</div>
+      <span class="sh-strategy">${sh.strategy}</span>
+      <button class="del-btn" onclick="deleteStakeholder(${sh.id})" aria-label="Delete">×</button>
+    </div>`;
+  }).join('');
+}
+
+function renderAll(){renderGrid();renderList();}
+
+// Seed
+stakeholders=[
+  {id:sid++,name:'VGA CIO',initials:'CI',org:'Volkswagen Group AU',strategy:'Manage closely',sentiment:'champion',power:9,interest:9,notes:'Key sponsor — monthly steering committee'},
+  {id:sid++,name:'Dealer Network Lead',initials:'DN',org:'VGA Dealer Network',strategy:'Keep informed',sentiment:'resistant',power:5,interest:8,notes:'Concerned about system change — run hands-on demos'},
+  {id:sid++,name:'VWFS Finance Lead',initials:'FL',org:'VW Financial Services',strategy:'Keep satisfied',sentiment:'neutral',power:8,interest:4,notes:'Quarterly updates sufficient; key for billing approval'},
+  {id:sid++,name:'IT Architect',initials:'IA',org:'Katzion',strategy:'Manage closely',sentiment:'supportive',power:6,interest:9,notes:'Integration SME — weekly check-ins'},
+];
+renderAll();
+
+window.addEventListener('resize',()=>{setTimeout(resizeCanvas,50);});
+setTimeout(resizeCanvas,100);
+</script>
+</body>
+</html>

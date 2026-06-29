@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprint Velocity Tracker — Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+  .topbar{background:#1a1a1a;color:#fff;padding:12px 2rem;display:flex;align-items:center;justify-content:space-between}
+  .topbar .back{font-size:12px;color:#aaa;text-decoration:none}.topbar .back:hover{color:#fff}
+  .topbar .tool-name{font-size:14px;font-weight:500}
+  .topbar .brand{font-size:13px;opacity:0.6;letter-spacing:0.05em;text-transform:uppercase}
+  .container{max-width:1000px;margin:0 auto;padding:2rem}
+  h1{font-size:26px;font-weight:600;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#666;margin-bottom:2rem}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:2rem}
+  .stat{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1rem 1.25rem;text-align:center}
+  .stat .num{font-size:24px;font-weight:700;margin-bottom:3px}
+  .stat .lbl{font-size:11px;color:#888}
+  .stat.primary{background:#1a1a1a;border-color:#1a1a1a}
+  .stat.primary .num{color:#fff}
+  .stat.primary .lbl{color:#888}
+  .stat.green .num{color:#166534}
+  .stat.amber .num{color:#92400e}
+  .stat.red .num{color:#991b1b}
+  .layout{display:grid;grid-template-columns:320px 1fr;gap:1.5rem;margin-bottom:1.5rem}
+  .panel{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem}
+  .panel-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+  .form-row{margin-bottom:0.75rem}
+  .form-row label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+  .form-row input,.form-row select{width:100%;padding:7px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;outline:none}
+  .form-row input:focus{border-color:#1a1a1a}
+  .add-btn{width:100%;padding:9px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:0.5rem}
+  .add-btn:hover{opacity:0.85}
+  .sprint-list{margin-top:0}
+  .sprint-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0ec;font-size:12px}
+  .sprint-item:last-child{border-bottom:none}
+  .sprint-num{width:26px;height:26px;border-radius:6px;background:#f0f0ec;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#444;flex-shrink:0}
+  .sprint-info{flex:1}
+  .sprint-label{font-weight:500;font-size:12px}
+  .sprint-meta{font-size:11px;color:#888;margin-top:2px}
+  .sprint-badge{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+  .badge-on{background:#d1fae5;color:#065f46}
+  .badge-over{background:#fee2e2;color:#991b1b}
+  .badge-under{background:#fef3c7;color:#92400e}
+  .del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px}
+  .del-btn:hover{color:#dc2626}
+  .chart-wrap{position:relative;width:100%;height:280px;margin:0}
+  .burndown-wrap{position:relative;width:100%;height:260px}
+  .full{margin-bottom:1.5rem}
+  .empty{font-size:13px;color:#aaa;padding:1.5rem 0;text-align:center}
+  .health-bar-wrap{background:#f0f0ec;border-radius:4px;height:8px;overflow:hidden;margin:8px 0 4px}
+  .health-bar{height:100%;border-radius:4px;transition:width 0.4s}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" class="back">← All tools</a>
+  <span class="tool-name">Sprint Velocity Tracker</span>
+  <span class="brand">Bharani PM Suite</span>
+</div>
+<div class="container">
+  <h1>Sprint Velocity Tracker</h1>
+  <p class="subtitle">Agile delivery health · Velocity trends · Burn-down progress</p>
+
+  <div class="stats" id="stats-row"></div>
+
+  <div class="layout">
+    <div>
+      <div class="panel" style="margin-bottom:1.5rem">
+        <div class="panel-title">Project settings</div>
+        <div class="form-row"><label>Project name</label><input type="text" id="proj-name" value="VGA eShop — Aftersales" oninput="renderAll()"></div>
+        <div class="form-row"><label>Total story points in backlog</label><input type="number" id="total-sp" value="280" oninput="renderAll()"></div>
+        <div class="form-row"><label>Sprint length (days)</label><select id="sprint-len"><option value="14" selected>2 weeks</option><option value="10">1.5 weeks</option><option value="7">1 week</option></select></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Log sprint</div>
+        <div class="form-row"><label>Sprint name</label><input type="text" id="sp-name" placeholder="e.g. Sprint 7"></div>
+        <div class="form-row"><label>Committed story points</label><input type="number" id="sp-committed" value="40" min="0"></div>
+        <div class="form-row"><label>Completed story points</label><input type="number" id="sp-completed" value="38" min="0"></div>
+        <div class="form-row"><label>Blockers / notes</label><input type="text" id="sp-notes" placeholder="e.g. SAP integration delay resolved"></div>
+        <button class="add-btn" onclick="addSprint()">+ Log sprint</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel full">
+        <div class="panel-title">Velocity trend — committed vs completed</div>
+        <div class="chart-wrap"><canvas id="velocity-chart" role="img" aria-label="Sprint velocity chart showing committed vs completed story points"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Sprint log</div>
+        <div id="sprint-list"><div class="empty">No sprints logged yet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Burn-down — remaining work</div>
+    <div class="burndown-wrap"><canvas id="burndown-chart" role="img" aria-label="Burn-down chart showing remaining story points over sprints"></canvas></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let sprints=[];
+let sid=1;
+let velChart=null,bdChart=null;
+
+function addSprint(){
+  const name=document.getElementById('sp-name').value.trim()||'Sprint '+sid;
+  const committed=parseInt(document.getElementById('sp-committed').value)||0;
+  const completed=parseInt(document.getElementById('sp-completed').value)||0;
+  sprints.push({id:sid++,name,committed,completed,notes:document.getElementById('sp-notes').value});
+  document.getElementById('sp-name').value='Sprint '+sid;
+  document.getElementById('sp-notes').value='';
+  renderAll();
+}
+
+function deleteSprint(id){sprints=sprints.filter(s=>s.id!==id);renderAll();}
+
+function renderStats(){
+  const total=parseInt(document.getElementById('total-sp').value)||0;
+  const completed=sprints.reduce((a,s)=>a+s.completed,0);
+  const avgVel=sprints.length?Math.round(sprints.reduce((a,s)=>a+s.completed,0)/sprints.length):0;
+  const remaining=Math.max(0,total-completed);
+  const sprintsLeft=avgVel>0?Math.ceil(remaining/avgVel):0;
+  const lastSprint=sprints[sprints.length-1];
+  const health=lastSprint?Math.round((lastSprint.completed/lastSprint.committed)*100):null;
+
+  let healthClass='';
+  if(health!==null){
+    if(health>=90)healthClass='green';
+    else if(health>=70)healthClass='amber';
+    else healthClass='red';
+  }
+
+  document.getElementById('stats-row').innerHTML=`
+    <div class="stat"><div class="num">${sprints.length}</div><div class="lbl">Sprints completed</div></div>
+    <div class="stat primary"><div class="num">${completed}</div><div class="lbl">Story points done</div></div>
+    <div class="stat"><div class="num">${remaining}</div><div class="lbl">Points remaining</div></div>
+    <div class="stat"><div class="num">${avgVel}</div><div class="lbl">Avg velocity / sprint</div></div>
+    <div class="stat ${healthClass}"><div class="num">${health!==null?health+'%':'—'}</div><div class="lbl">Last sprint health</div></div>
+  `;
+}
+
+function renderList(){
+  const el=document.getElementById('sprint-list');
+  if(!sprints.length){el.innerHTML='<div class="empty">No sprints logged yet.</div>';return;}
+  el.innerHTML=[...sprints].reverse().map(s=>{
+    const pct=s.committed>0?Math.round(s.completed/s.committed*100):0;
+    let badgeClass='badge-on',badgeLabel='On track';
+    if(pct<70){badgeClass='badge-over';badgeLabel='Under ('+pct+'%)';}
+    else if(pct>110){badgeClass='badge-under';badgeLabel='Over ('+pct+'%)';}
+    else badgeLabel=pct+'%';
+    return `<div class="sprint-item">
+      <div class="sprint-num">${s.id}</div>
+      <div class="sprint-info">
+        <div class="sprint-label">${s.name}</div>
+        <div class="sprint-meta">Committed: ${s.committed} · Completed: ${s.completed}${s.notes?' · '+s.notes:''}</div>
+        <div class="health-bar-wrap"><div class="health-bar" style="width:${Math.min(pct,100)}%;background:${pct>=90?'#16a34a':pct>=70?'#d97706':'#dc2626'}"></div></div>
+      </div>
+      <span class="sprint-badge ${badgeClass}">${badgeLabel}</span>
+      <button class="del-btn" onclick="deleteSprint(${s.id})" aria-label="Delete">×</button>
+    </div>`;
+  }).join('');
+}
+
+function renderVelocityChart(){
+  const ctx=document.getElementById('velocity-chart').getContext('2d');
+  if(velChart)velChart.destroy();
+  if(!sprints.length)return;
+  velChart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:sprints.map(s=>s.name),
+      datasets:[
+        {label:'Committed',data:sprints.map(s=>s.committed),backgroundColor:'#e0e0db',borderWidth:0},
+        {label:'Completed',data:sprints.map(s=>s.completed),backgroundColor:'#1a1a1a',borderWidth:0}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{font:{size:12},boxWidth:12}}},
+      scales:{x:{grid:{display:false}},y:{grid:{color:'#f0f0ec'},ticks:{font:{size:11}}}}
+    }
+  });
+}
+
+function renderBurndown(){
+  const ctx=document.getElementById('burndown-chart').getContext('2d');
+  if(bdChart)bdChart.destroy();
+  const total=parseInt(document.getElementById('total-sp').value)||0;
+  if(!sprints.length||!total)return;
+  let remaining=total;
+  const actual=[total,...sprints.map(s=>{remaining=Math.max(0,remaining-s.completed);return remaining;})];
+  const idealStep=total/sprints.length;
+  const ideal=sprints.map((_,i)=>Math.round(Math.max(0,total-idealStep*(i+1))));
+  ideal.unshift(total);
+  const labels=['Start',...sprints.map(s=>s.name)];
+  bdChart=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Ideal',data:ideal,borderColor:'#e0e0db',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false},
+        {label:'Actual remaining',data:actual,borderColor:'#1a1a1a',borderWidth:2.5,pointRadius:4,fill:false,tension:0.2}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{font:{size:12},boxWidth:12}}},
+      scales:{x:{grid:{display:false}},y:{grid:{color:'#f0f0ec'},ticks:{font:{size:11}},min:0}}
+    }
+  });
+}
+
+function renderAll(){renderStats();renderList();renderVelocityChart();renderBurndown();}
+
+// Seed data
+const seedSprints=[
+  {name:'Sprint 1',committed:38,completed:36,notes:'Setup and discovery'},
+  {name:'Sprint 2',committed:40,completed:42,notes:'Sales Cloud core config'},
+  {name:'Sprint 3',committed:42,completed:38,notes:'SAP integration — partial delay'},
+  {name:'Sprint 4',committed:40,completed:41,notes:'UAT prep — all items done'},
+  {name:'Sprint 5',committed:38,completed:40,notes:'Go-live sprint — exceeded'},
+];
+seedSprints.forEach(s=>{sprints.push({id:sid++,...s});});
+document.getElementById('sp-name').value='Sprint '+sid;
+renderAll();
+</script>
+</body>
+</html>

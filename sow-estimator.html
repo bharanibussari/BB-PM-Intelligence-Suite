@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOW Scope Estimator — Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+  .topbar{background:#1a1a1a;color:#fff;padding:12px 2rem;display:flex;align-items:center;justify-content:space-between}
+  .topbar .back{font-size:12px;color:#aaa;text-decoration:none}.topbar .back:hover{color:#fff}
+  .topbar .tool-name{font-size:14px;font-weight:500}
+  .topbar .brand{font-size:13px;opacity:0.6;letter-spacing:0.05em;text-transform:uppercase}
+  .container{max-width:900px;margin:0 auto;padding:2rem}
+  h1{font-size:26px;font-weight:600;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#666;margin-bottom:2rem}
+  .section{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.5rem;margin-bottom:1.5rem}
+  .section-title{font-size:13px;font-weight:600;margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid #f0f0ec}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-row{margin-bottom:0}
+  .form-row label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+  .form-row input,.form-row select{width:100%;padding:7px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;outline:none}
+  .form-row input:focus{border-color:#1a1a1a}
+  .workstream-table{width:100%;border-collapse:collapse}
+  .workstream-table th{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;padding:6px 8px;text-align:left;border-bottom:1px solid #e8e8e4}
+  .workstream-table td{padding:8px;border-bottom:1px solid #f4f4f0;font-size:13px;vertical-align:middle}
+  .workstream-table tr:last-child td{border-bottom:none}
+  .workstream-table input,.workstream-table select{border:1px solid #e0e0db;border-radius:6px;padding:5px 7px;font-size:12px;background:#fafaf8;width:100%;font-family:inherit}
+  .ws-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px}
+  .ws-del:hover{color:#dc2626}
+  .add-ws-btn{margin-top:10px;padding:7px 14px;font-size:12px;font-weight:500;background:none;border:1px solid #e0e0db;border-radius:7px;cursor:pointer;color:#444}
+  .add-ws-btn:hover{background:#f0f0ec}
+  .results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+  .result-card{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem;text-align:center}
+  .result-card .num{font-size:28px;font-weight:700;margin-bottom:4px}
+  .result-card .lbl{font-size:12px;color:#888}
+  .result-card.primary{background:#1a1a1a;border-color:#1a1a1a}
+  .result-card.primary .num{color:#fff}
+  .result-card.primary .lbl{color:#888}
+  .result-card.warn{background:#fffbeb;border-color:#fcd34d}
+  .result-card.warn .num{color:#92400e}
+  .breakdown-table{width:100%;border-collapse:collapse}
+  .breakdown-table th{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;padding:6px 8px;text-align:left;border-bottom:1px solid #e8e8e4}
+  .breakdown-table td{padding:8px;border-bottom:1px solid #f4f4f0;font-size:13px}
+  .breakdown-table tr:last-child td{border-bottom:none;font-weight:600}
+  .breakdown-table tr.total-row{background:#f8f8f6}
+  .export-btn{padding:9px 18px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer}
+  .export-btn:hover{opacity:0.85}
+  .risk-flag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;margin-top:6px}
+  .risk-flag.green{background:#d1fae5;color:#065f46}
+  .risk-flag.amber{background:#fef3c7;color:#92400e}
+  .risk-flag.red{background:#fee2e2;color:#991b1b}
+  .assumptions{margin-top:1rem}
+  .assumptions textarea{width:100%;padding:9px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;min-height:80px;resize:vertical}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" class="back">← All tools</a>
+  <span class="tool-name">SOW Scope Estimator</span>
+  <span class="brand">Bharani PM Suite</span>
+</div>
+
+<div class="container">
+  <h1>SOW Scope Estimator</h1>
+  <p class="subtitle">Pre-sales effort and cost estimation for Salesforce engagements</p>
+
+  <div class="section">
+    <div class="section-title">Engagement parameters</div>
+    <div class="form-grid">
+      <div class="form-row"><label>Client name</label><input type="text" id="client" value="Volkswagen Group Australia" oninput="recalc()"></div>
+      <div class="form-row"><label>Engagement type</label>
+        <select id="eng-type" onchange="recalc()">
+          <option>Net-new implementation</option>
+          <option>Phase 2 / expansion</option>
+          <option>Migration</option>
+          <option>Integration only</option>
+          <option>POC / pilot</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Complexity</label>
+        <select id="complexity" onchange="recalc()">
+          <option value="1.0">Standard</option>
+          <option value="1.3" selected>Complex (multi-cloud / integrations)</option>
+          <option value="1.6">Highly complex (regulated / data migration)</option>
+        </select>
+      </div>
+      <div class="form-row"><label>PM day rate ($AUD)</label><input type="number" id="pm-rate" value="1000" oninput="recalc()"></div>
+      <div class="form-row"><label>Contingency %</label><input type="number" id="contingency" value="15" oninput="recalc()"></div>
+      <div class="form-row"><label>Margin target %</label><input type="number" id="margin" value="30" oninput="recalc()"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Workstreams</div>
+    <table class="workstream-table">
+      <thead>
+        <tr>
+          <th style="width:30%">Workstream</th>
+          <th style="width:20%">Cloud / module</th>
+          <th style="width:15%">Est. days</th>
+          <th style="width:20%">Assigned role</th>
+          <th style="width:10%">Phase</th>
+          <th style="width:5%"></th>
+        </tr>
+      </thead>
+      <tbody id="ws-body"></tbody>
+    </table>
+    <button class="add-ws-btn" onclick="addWorkstream()">+ Add workstream</button>
+  </div>
+
+  <div class="results" id="results-cards"></div>
+
+  <div class="section">
+    <div class="section-title">Breakdown by workstream</div>
+    <table class="breakdown-table" id="breakdown-table"></table>
+    <div class="assumptions">
+      <div style="font-size:12px;color:#666;margin-bottom:4px">Assumptions & exclusions (for SOW)</div>
+      <textarea id="assumptions" placeholder="e.g. Client to provide test environments by week 2. Data migration scoped for Salesforce objects only. Out of scope: SAP configuration changes."></textarea>
+    </div>
+    <div style="margin-top:1rem">
+      <button class="export-btn" onclick="exportSOW()">↓ Export SOW summary</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let workstreams=[];
+let wsId=1;
+const defaultWS=[
+  {name:'Discovery & requirements',cloud:'All clouds',days:10,role:'Senior BA',phase:'1'},
+  {name:'Sales Cloud configuration',cloud:'Sales Cloud',days:15,role:'SF Consultant',phase:'2'},
+  {name:'Service Cloud configuration',cloud:'Service Cloud',days:12,role:'SF Consultant',phase:'2'},
+  {name:'MuleSoft integration',cloud:'MuleSoft',days:20,role:'Integration Dev',phase:'2'},
+  {name:'Data migration',cloud:'Data Cloud',days:15,role:'Data Engineer',phase:'2'},
+  {name:'UAT coordination',cloud:'All clouds',days:8,role:'BA / PM',phase:'3'},
+  {name:'Project management',cloud:'Delivery',days:25,role:'Senior PM',phase:'All'},
+  {name:'Go-live & hypercare',cloud:'All clouds',days:5,role:'Senior PM',phase:'4'},
+];
+
+function initWS(){
+  workstreams=defaultWS.map(w=>({...w,id:wsId++}));
+  renderWS();
+  recalc();
+}
+
+function renderWS(){
+  const tbody=document.getElementById('ws-body');
+  tbody.innerHTML=workstreams.map(w=>`
+    <tr data-id="${w.id}">
+      <td><input type="text" value="${w.name}" onchange="updateWS(${w.id},'name',this.value)" oninput="recalc()"></td>
+      <td><input type="text" value="${w.cloud}" onchange="updateWS(${w.id},'cloud',this.value)"></td>
+      <td><input type="number" value="${w.days}" min="0" onchange="updateWS(${w.id},'days',+this.value)" oninput="updateWS(${w.id},'days',+this.value);recalc()" style="text-align:right"></td>
+      <td><input type="text" value="${w.role}" onchange="updateWS(${w.id},'role',this.value)"></td>
+      <td><select onchange="updateWS(${w.id},'phase',this.value)">
+        ${['1','2','3','4','All'].map(p=>`<option${w.phase===p?' selected':''}>${p}</option>`).join('')}
+      </select></td>
+      <td><button class="ws-del" onclick="deleteWS(${w.id})" aria-label="Delete">×</button></td>
+    </tr>`).join('');
+}
+
+function updateWS(id,field,value){
+  const w=workstreams.find(w=>w.id===id);
+  if(w)w[field]=value;
+  recalc();
+}
+
+function addWorkstream(){
+  workstreams.push({id:wsId++,name:'New workstream',cloud:'',days:5,role:'Consultant',phase:'2'});
+  renderWS();recalc();
+}
+
+function deleteWS(id){workstreams=workstreams.filter(w=>w.id!==id);renderWS();recalc();}
+
+function recalc(){
+  const complexity=parseFloat(document.getElementById('complexity').value);
+  const pmRate=parseFloat(document.getElementById('pm-rate').value)||1000;
+  const contingencyPct=parseFloat(document.getElementById('contingency').value)||15;
+  const marginPct=parseFloat(document.getElementById('margin').value)||30;
+
+  const totalDays=workstreams.reduce((a,w)=>a+(+w.days||0),0);
+  const adjustedDays=Math.round(totalDays*complexity);
+  const baseCost=adjustedDays*pmRate;
+  const contingencyAmount=Math.round(baseCost*contingencyPct/100);
+  const totalWithContingency=baseCost+contingencyAmount;
+  const sellPrice=Math.round(totalWithContingency/(1-marginPct/100));
+  const marginAmount=sellPrice-totalWithContingency;
+
+  const cards=document.getElementById('results-cards');
+  cards.innerHTML=`
+    <div class="result-card"><div class="num">${totalDays}</div><div class="lbl">Estimated days (base)</div></div>
+    <div class="result-card warn"><div class="num">${adjustedDays}</div><div class="lbl">Adjusted days (×${complexity} complexity)</div></div>
+    <div class="result-card primary"><div class="num">$${(sellPrice/1000).toFixed(0)}K</div><div class="lbl">SOW sell price (incl. margin)</div></div>
+  `;
+
+  const flags=[];
+  if(contingencyPct<10)flags.push({level:'red',msg:'Contingency below 10% — high risk for enterprise delivery'});
+  else if(contingencyPct<15)flags.push({level:'amber',msg:'Consider 15–20% contingency for complex Salesforce programs'});
+  else flags.push({level:'green',msg:'Contingency looks healthy for this engagement type'});
+  if(marginPct<25)flags.push({level:'amber',msg:'Margin below 25% — check with GlobalLogic leadership before presenting'});
+
+  const breakdown=document.getElementById('breakdown-table');
+  const rows=workstreams.map(w=>{
+    const adj=Math.round((+w.days||0)*complexity);
+    const cost=adj*pmRate;
+    return `<tr><td>${w.name}</td><td style="text-align:center">${w.phase}</td><td style="text-align:center">${+w.days||0}</td><td style="text-align:center">${adj}</td><td style="text-align:right">$${cost.toLocaleString()}</td><td style="font-size:12px;color:#888">${w.role}</td></tr>`;
+  });
+  breakdown.innerHTML=`
+    <thead><tr>
+      <th>Workstream</th><th style="text-align:center">Phase</th>
+      <th style="text-align:center">Base days</th><th style="text-align:center">Adj. days</th>
+      <th style="text-align:right">Cost (at rate)</th><th>Role</th>
+    </tr></thead>
+    <tbody>${rows.join('')}
+    <tr class="total-row"><td>Total</td><td></td><td style="text-align:center">${totalDays}</td><td style="text-align:center">${adjustedDays}</td><td style="text-align:right">$${baseCost.toLocaleString()}</td><td></td></tr>
+    <tr><td>Contingency (${contingencyPct}%)</td><td></td><td></td><td></td><td style="text-align:right">$${contingencyAmount.toLocaleString()}</td><td></td></tr>
+    <tr class="total-row"><td><strong>SOW sell price (incl. ${marginPct}% margin)</strong></td><td></td><td></td><td></td><td style="text-align:right"><strong>$${sellPrice.toLocaleString()}</strong></td><td></td></tr>
+    </tbody>`;
+
+  // Append flags
+  const flagHTML=flags.map(f=>`<div class="risk-flag ${f.level}" style="display:block;margin-top:8px">⚑ ${f.msg}</div>`).join('');
+  breakdown.insertAdjacentHTML('afterend',flagHTML);
+}
+
+function exportSOW(){
+  const client=document.getElementById('client').value||'Client';
+  const assumptions=document.getElementById('assumptions').value;
+  let txt=`SOW SCOPE SUMMARY — ${client}\n`;
+  txt+=`Generated: ${new Date().toLocaleDateString('en-AU')}\n\n`;
+  txt+='WORKSTREAMS\n';
+  workstreams.forEach(w=>{txt+=`  Phase ${w.phase} | ${w.name} (${w.cloud}) — ${w.days} days | ${w.role}\n`;});
+  txt+='\nASSUMPTIONS & EXCLUSIONS\n'+assumptions;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='sow-scope-summary.txt';a.click();
+}
+
+initWS();
+</script>
+</body>
+</html>

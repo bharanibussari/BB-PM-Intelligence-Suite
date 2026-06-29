@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Change Impact Assessor — Bharani PM Intelligence Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;min-height:100vh}
+  .topbar{background:#1a1a1a;color:#fff;padding:12px 2rem;display:flex;align-items:center;justify-content:space-between}
+  .topbar .back{font-size:12px;color:#aaa;text-decoration:none}.topbar .back:hover{color:#fff}
+  .topbar .tool-name{font-size:14px;font-weight:500}
+  .topbar .brand{font-size:13px;opacity:0.6;letter-spacing:0.05em;text-transform:uppercase}
+  .container{max-width:1000px;margin:0 auto;padding:2rem}
+  h1{font-size:26px;font-weight:600;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#666;margin-bottom:2rem}
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem}
+  .panel{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+  .panel-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+  .form-row{margin-bottom:0.75rem}
+  .form-row label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+  .form-row input,.form-row select,.form-row textarea{width:100%;padding:7px 10px;border:1px solid #e0e0db;border-radius:7px;font-size:13px;background:#fafaf8;font-family:inherit;outline:none}
+  .form-row input:focus,.form-row textarea:focus{border-color:#1a1a1a}
+  .slider-row{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
+  .slider-row label{font-size:12px;color:#666;flex:1}
+  .slider-row input[type=range]{width:100px;accent-color:#1a1a1a}
+  .slider-row .val{font-size:12px;font-weight:600;width:60px;text-align:right;color:#444}
+  .add-btn{width:100%;padding:9px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:0.5rem}
+  .add-btn:hover{opacity:0.85}
+  .change-item{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1rem 1.25rem;margin-bottom:12px}
+  .change-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .change-title{font-size:14px;font-weight:600;flex:1}
+  .impact-score{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+  .impact-critical{background:#fee2e2;color:#991b1b}
+  .impact-high{background:#fef3c7;color:#92400e}
+  .impact-medium{background:#d1fae5;color:#166534}
+  .impact-low{background:#dbeafe;color:#1e40af}
+  .del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;line-height:1}
+  .del-btn:hover{color:#dc2626}
+  .change-bars{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+  .bar-item label{font-size:11px;color:#888;display:block;margin-bottom:3px}
+  .bar-wrap{background:#f0f0ec;border-radius:4px;height:7px;overflow:hidden}
+  .bar{height:100%;border-radius:4px;transition:width 0.4s}
+  .change-actions{background:#f8f8f6;border-radius:8px;padding:10px;font-size:12px;margin-top:8px}
+  .change-actions .actions-title{font-weight:600;margin-bottom:6px;color:#444;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
+  .action-pill{display:inline-block;background:#fff;border:1px solid #e0e0db;border-radius:20px;padding:3px 10px;font-size:11px;margin:2px;color:#444}
+  .empty{font-size:13px;color:#aaa;padding:1.5rem 0;text-align:center}
+  .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+  .summary-card{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1rem 1.25rem;text-align:center}
+  .summary-card .num{font-size:28px;font-weight:700;margin-bottom:3px}
+  .summary-card .lbl{font-size:11px;color:#888}
+  .export-btn{padding:9px 18px;font-size:13px;font-weight:500;background:#1a1a1a;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:0.5rem}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" class="back">← All tools</a>
+  <span class="tool-name">Change Impact Assessor</span>
+  <span class="brand">Bharani PM Suite</span>
+</div>
+<div class="container">
+  <h1>Change Impact Assessor</h1>
+  <p class="subtitle">Organisational change management · Impact scoring · Action planning per change event</p>
+
+  <div class="summary-grid" id="summary-grid"></div>
+
+  <div class="layout">
+    <div>
+      <div class="panel">
+        <div class="panel-title">Add change event</div>
+        <div class="form-row"><label>Change name</label><input type="text" id="ch-name" placeholder="e.g. Audi data migration to unified CRM"></div>
+        <div class="form-row"><label>Category</label>
+          <select id="ch-cat">
+            <option>Process change</option><option>System cutover</option><option>Data migration</option>
+            <option>Role / responsibility</option><option>Technology platform</option><option>Org structure</option>
+          </select>
+        </div>
+        <div class="form-row"><label>Groups affected</label><input type="text" id="ch-groups" placeholder="e.g. Dealer network, Audi brand team"></div>
+        <div class="slider-row"><label>People affected (est.)</label><input type="range" min="1" max="500" value="80" id="ch-people" step="10" oninput="document.getElementById('ch-pv').textContent=this.value"><span class="val" id="ch-pv">80</span></div>
+        <div class="slider-row"><label>Disruption severity (1–10)</label><input type="range" min="1" max="10" value="7" id="ch-severity" step="1" oninput="document.getElementById('ch-sv').textContent=this.value"><span class="val" id="ch-sv">7</span></div>
+        <div class="slider-row"><label>Readiness level (1–10)</label><input type="range" min="1" max="10" value="4" id="ch-readiness" step="1" oninput="document.getElementById('ch-rv').textContent=this.value"><span class="val" id="ch-rv">4</span></div>
+        <div class="slider-row"><label>Stakeholder resistance (1–10)</label><input type="range" min="1" max="10" value="6" id="ch-resistance" step="1" oninput="document.getElementById('ch-resv').textContent=this.value"><span class="val" id="ch-resv">6</span></div>
+        <div class="slider-row"><label>Training requirement (1–10)</label><input type="range" min="1" max="10" value="7" id="ch-training" step="1" oninput="document.getElementById('ch-tv').textContent=this.value"><span class="val" id="ch-tv">7</span></div>
+        <div class="form-row"><label>Key mitigation / action planned</label><input type="text" id="ch-action" placeholder="e.g. Run parallel system for 2 weeks; dedicated comms plan"></div>
+        <button class="add-btn" onclick="addChange()">+ Add change event</button>
+      </div>
+    </div>
+
+    <div>
+      <div id="change-list"><div class="empty">No change events added yet. Add your first change above.</div></div>
+      <button class="export-btn" onclick="exportReport()">↓ Export OCM report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let changes=[],cid=1;
+
+function impactScore(c){
+  return Math.round((c.severity*0.35+c.resistance*0.30+(10-c.readiness)*0.20+c.training*0.15));
+}
+
+function impactClass(score){
+  if(score>=8)return'impact-critical';
+  if(score>=6)return'impact-high';
+  if(score>=4)return'impact-medium';
+  return'impact-low';
+}
+
+function impactLabel(score){
+  if(score>=8)return'Critical';if(score>=6)return'High';if(score>=4)return'Medium';return'Low';
+}
+
+function getActions(c){
+  const actions=[];
+  if(c.resistance>=7)actions.push('Stakeholder engagement plan','Executive sponsor activation','1:1 resistance sessions');
+  if(c.training>=7)actions.push('Structured training programme','Super-user network','Job aids / quick reference cards');
+  if(c.readiness<=4)actions.push('Readiness assessment','Pilot / UAT involvement','Phased cutover');
+  if(c.severity>=8)actions.push('Dedicated comms plan','Hypercare period','Rollback plan documented');
+  if(c.cat==='Data migration')actions.push('Data validation workshop','Parallel run period','Legal & compliance sign-off');
+  if(!actions.length)actions.push('Standard comms','Check-in at go-live');
+  return actions;
+}
+
+function addChange(){
+  const name=document.getElementById('ch-name').value.trim();
+  if(!name){document.getElementById('ch-name').focus();return;}
+  changes.push({
+    id:cid++,name,
+    cat:document.getElementById('ch-cat').value,
+    groups:document.getElementById('ch-groups').value||'TBD',
+    people:parseInt(document.getElementById('ch-people').value),
+    severity:parseInt(document.getElementById('ch-severity').value),
+    readiness:parseInt(document.getElementById('ch-readiness').value),
+    resistance:parseInt(document.getElementById('ch-resistance').value),
+    training:parseInt(document.getElementById('ch-training').value),
+    action:document.getElementById('ch-action').value
+  });
+  document.getElementById('ch-name').value='';
+  document.getElementById('ch-groups').value='';
+  document.getElementById('ch-action').value='';
+  renderAll();
+}
+
+function deleteChange(id){changes=changes.filter(c=>c.id!==id);renderAll();}
+
+function renderList(){
+  const el=document.getElementById('change-list');
+  if(!changes.length){el.innerHTML='<div class="empty">No change events added yet.</div>';return;}
+  el.innerHTML=[...changes].sort((a,b)=>impactScore(b)-impactScore(a)).map(c=>{
+    const score=impactScore(c);
+    const ic=impactClass(score);
+    const actions=getActions(c);
+    return `<div class="change-item">
+      <div class="change-header">
+        <div class="impact-score ${ic}">${score}</div>
+        <div class="change-title">${c.name}</div>
+        <button class="del-btn" onclick="deleteChange(${c.id})" aria-label="Delete">×</button>
+      </div>
+      <div style="font-size:11px;color:#888;margin-bottom:10px">${c.cat} · ${c.groups} · ~${c.people} people affected · <strong style="color:#444">${impactLabel(score)} impact</strong></div>
+      <div class="change-bars">
+        <div class="bar-item"><label>Disruption severity</label><div class="bar-wrap"><div class="bar" style="width:${c.severity*10}%;background:#ef4444"></div></div></div>
+        <div class="bar-item"><label>Stakeholder resistance</label><div class="bar-wrap"><div class="bar" style="width:${c.resistance*10}%;background:#f97316"></div></div></div>
+        <div class="bar-item"><label>Change readiness</label><div class="bar-wrap"><div class="bar" style="width:${c.readiness*10}%;background:#22c55e"></div></div></div>
+        <div class="bar-item"><label>Training needed</label><div class="bar-wrap"><div class="bar" style="width:${c.training*10}%;background:#3b82f6"></div></div></div>
+      </div>
+      ${c.action?`<div style="font-size:12px;color:#444;margin-bottom:8px">⚑ <strong>Planned:</strong> ${c.action}</div>`:''}
+      <div class="change-actions">
+        <div class="actions-title">Recommended OCM actions</div>
+        ${actions.map(a=>`<span class="action-pill">${a}</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSummary(){
+  const total=changes.length;
+  const critical=changes.filter(c=>impactScore(c)>=8).length;
+  const totalPeople=changes.reduce((a,c)=>a+c.people,0);
+  const avgScore=total?Math.round(changes.reduce((a,c)=>a+impactScore(c),0)/total):0;
+  document.getElementById('summary-grid').innerHTML=`
+    <div class="summary-card"><div class="num">${total}</div><div class="lbl">Change events</div></div>
+    <div class="summary-card"><div class="num" style="color:#991b1b">${critical}</div><div class="lbl">Critical impact</div></div>
+    <div class="summary-card"><div class="num">${totalPeople.toLocaleString()}</div><div class="lbl">People affected (total)</div></div>
+    <div class="summary-card"><div class="num">${avgScore}</div><div class="lbl">Average impact score</div></div>
+  `;
+}
+
+function renderAll(){renderSummary();renderList();}
+
+function exportReport(){
+  if(!changes.length)return;
+  let txt=`OCM CHANGE IMPACT REPORT\nPrepared by: Bharani Bussari, Senior PM\nDate: ${new Date().toLocaleDateString('en-AU')}\n\n`;
+  [...changes].sort((a,b)=>impactScore(b)-impactScore(a)).forEach(c=>{
+    txt+=`${c.name}\nCategory: ${c.cat} | Impact: ${impactLabel(impactScore(c))} (${impactScore(c)}/10) | People: ${c.people}\nGroups: ${c.groups}\nAction: ${c.action||'TBD'}\nRecommended OCM: ${getActions(c).join(', ')}\n\n`;
+  });
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='ocm-impact-report.txt';a.click();
+}
+
+// Seed
+changes=[
+  {id:cid++,name:'Audi brand migration to unified Salesforce CRM',cat:'Data migration',groups:'Audi brand team, Dealer network',people:120,severity:8,readiness:4,resistance:7,training:8,action:'Parallel run for 2 weeks; dedicated legal & compliance sign-off; Bharani-led steering committee alignment'},
+  {id:cid++,name:'eShop go-live — dealer aftersales portal',cat:'System cutover',groups:'Aftersales team, 45 dealers',people:200,severity:6,readiness:6,resistance:5,training:7,action:'Super-user training; hands-on demo sessions with dealer network; hypercare for 4 weeks'},
+  {id:cid++,name:'Agentforce — automated test-drive booking',cat:'Process change',groups:'Sales team, Call centre',people:60,severity:5,readiness:5,resistance:4,training:6,action:'Communication plan; pilot with 3 dealers before full rollout'},
+];
+renderAll();
+</script>
+</body>
+</html>
